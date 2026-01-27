@@ -59,7 +59,7 @@ df1_melted = df1_filtered.melt(
     value_name='学習費'
 )
 
-fig1 = px.bar(
+fig1_01 = px.bar(
     df1_melted,
     x='項目',
     y='学習費',
@@ -70,10 +70,26 @@ fig1 = px.bar(
         '項目': '調査項目',
         '学校種': '学校種'
     },
-    title=f'{category}の内訳比較'
+    title=f'{category}の内訳比較（棒グラフ）'
 )
 
-st.plotly_chart(fig1, use_container_width=True)
+st.plotly_chart(fig1_01, use_container_width=True)
+
+fig1_02 = px.area(
+    df1_melted,
+    x='項目',
+    y='学習費',
+    color='学校種',
+    labels={
+        '学習費': '学習費（円）',
+        '項目': '調査項目',
+        '学校種': '学校種'
+    },
+
+    title=f'{category}の内訳比較（面グラフ）'
+)
+
+st.plotly_chart(fig1_02, use_container_width=True)
 
 df2_filtered = df2[df2['区分'] == selected_money]
 
@@ -96,3 +112,6 @@ st.plotly_chart(fig2, use_container_width=True)
 if st.checkbox('詳細データを表示'):
     st.dataframe(df1_filtered)
     st.dataframe(df2_filtered)
+
+if st.checkbox('解釈や説明'):
+    st.write('')
