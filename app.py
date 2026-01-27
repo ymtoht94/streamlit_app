@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -8,7 +7,6 @@ st.title('子どもの学校別学習費調査')
 df = pd.read_csv('school_cost_01.csv')
 
 with st.sidebar:
-<<<<<<< HEAD
     st.subheader('抽出条件')
 
     category = st.selectbox('学習費区分を選択してください',
@@ -18,4 +16,9 @@ with st.sidebar:
                            df[df['学習費区分'] == category]['項目'].unique(),
                            default=df[df['学習費区分'] == category]['項目'].unique()[0])
 
-    st.subheader('')
+    st.subheader('表示設定')
+    schools = st.multiselect('比較する学校種を選択してください',
+                             df.columns[2:].tolist(),
+                             default=df.columns[2:4].tolist())
+    
+df_filtered = df[(df['学習費区分'] == category) & (df['項目'].isin(items))]
