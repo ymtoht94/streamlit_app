@@ -4,8 +4,9 @@ import plotly.express as px
 import time
 
 with st.spinner("データを読み込み中...", show_time=True):
-    time.sleep(5)
-st.button("再試行")
+    time.sleep(0.5)
+if st.button("再読み込み"):
+    st.rerun()
 
 st.title('子どもの学校別学習費調査')
 
@@ -25,17 +26,14 @@ with st.sidebar:
     items = st.multiselect(
         '表示する項目を選択してください（複数選択可）',
         item_candidates,
-        default=list(item_candidates[:1])
     )
 
     st.subheader('表示設定')
-
     school_cols = df1.columns[2:].tolist()
 
     schools = st.multiselect(
         '比較する学校種を選択してください',
         school_cols,
-        default=school_cols[:2]
     )
 
     st.subheader('金額段階（構成比）')
@@ -78,7 +76,8 @@ fig1_01 = px.bar(
     title=f'{category}の内訳比較（棒グラフ）'
 )
 
-st.plotly_chart(fig1_01, use_container_width=True)
+total_cost = df1_melted['学習費'].sum()
+st.metric(label='選択条件の学習費合計', value=f'{total_cost:,.0f}円')
 
 fig1_02 = px.area(
     df1_melted,
@@ -93,7 +92,13 @@ fig1_02 = px.area(
     title=f'{category}の内訳比較（面グラフ）'
 )
 
-st.plotly_chart(fig1_02, use_container_width=True)
+tab1, tab2 = st.tabs(['棒グラフ', '面グラフ'])
+
+with tab1:
+    st.plotly_chart(fig1_01, use_container_width=True)
+
+with tab2:
+    st.plotly_chart(fig1_02, use_container_width=True)
 
 df2_filtered = df2[df2['区分'] == selected_money]
 
@@ -114,8 +119,8 @@ fig2 = px.line(
 st.plotly_chart(fig2, use_container_width=True)
 
 if st.checkbox('詳細データを表示'):
-    st.dataframe(df1_filtered)
-    st.dataframe(df2_filtered)
+    st.dataframe(df1_filtered.reset_index(drop=True))
+    st.dataframe(df2_filtered.reset_index(drop=True))
 
 if st.checkbox('解釈や説明'):
     st.write('')
