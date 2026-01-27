@@ -83,7 +83,7 @@ df2_melted = df2_filtered.melt(
     value_name='割合'
 )
 
-fig2 = px.bar(
+fig2 = px.line(
     df2_melted,
     x='学校種',
     y='割合',
@@ -95,3 +95,4 @@ st.plotly_chart(fig2, use_container_width=True)
 
 if st.checkbox('詳細データを表示'):
     st.dataframe(df1_filtered)
+    st.dataframe(df2_filtered)
