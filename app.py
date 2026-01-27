@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import time
+
+with st.spinner("データを読み込み中...", show_time=True):
+    time.sleep(5)
+st.button("再試行")
 
 st.title('子どもの学校別学習費調査')
 
@@ -85,7 +90,6 @@ fig1_02 = px.area(
         '項目': '調査項目',
         '学校種': '学校種'
     },
-
     title=f'{category}の内訳比較（面グラフ）'
 )
 
@@ -115,3 +119,8 @@ if st.checkbox('詳細データを表示'):
 
 if st.checkbox('解釈や説明'):
     st.write('')
+
+st.subheader('使用したWebサイトのURL')
+col = st.columns(2)
+col[0].link_button('参考資料1', 'https://www.e-stat.go.jp/dbview?sid=0003368823')
+col[1].link_button('参考資料2', 'https://www.e-stat.go.jp/dbview?sid=0003368814')
