@@ -4,11 +4,14 @@ import plotly.express as px
 import time
 
 with st.spinner("データを読み込み中...", show_time=True):
-    time.sleep(0.5)
+    time.sleep(1.0)
 if st.button("再読み込み"):
     st.rerun()
 
 st.title('子どもの学校別学習費調査')
+
+st.subheader('アプリの概要・目的・使い方')
+st.write('子どもの学習費についてe-Statから得られた統計表をもとに条件を指定してグラフの表示や学習費を求めるアプリである。')
 
 df1 = pd.read_csv('school_cost_01.csv')
 df2 = pd.read_csv('school_cost_02.csv')
@@ -49,6 +52,9 @@ with st.sidebar:
 
     selected_money = money_categories[money_index]
     st.caption(f'選択中：{selected_money}')
+
+    st.subheader('メモ')
+    st.text_area('')
 
 df1_filtered = df1[
     (df1['学習費区分'] == category) &
@@ -92,7 +98,7 @@ fig1_02 = px.area(
     title=f'{category}の内訳比較（面グラフ）'
 )
 
-tab1, tab2 = st.tabs(['棒グラフ', '面グラフ'])
+tab1, tab2 = st.tabs(['グラフ1（棒グラフ）', 'グラフ2（面グラフ）'])
 
 with tab1:
     st.plotly_chart(fig1_01, use_container_width=True)
@@ -105,16 +111,26 @@ df2_filtered = df2[df2['区分'] == selected_money]
 df2_melted = df2_filtered.melt(
     id_vars='区分',
     var_name='学校種',
-    value_name='割合'
+    value_name='値'
 )
 
-fig2 = px.line(
-    df2_melted,
-    x='学校種',
-    y='割合',
-    title=f'金額区分「{selected_money}」の構成比',
-    labels={'割合': '割合（%）'}
-)
+if selected_money == '支出者平均額（千円）':
+    fig2 = px.line(
+        df2_melted,
+        x='学校種',
+        y='値',
+        title=f'支出者平均額（折れ線グラフ3）',
+        labels={'値': '金額（千円）'}
+    )
+else:
+    fig2 = px.line(
+        df2_melted,
+        x='学校種',
+        y='値',
+        title=f'金額区分「{selected_money}」の構成比（折れ線グラフ3）',
+        labels={'値': '割合（%）'}
+    )
+
 
 st.plotly_chart(fig2, use_container_width=True)
 
@@ -123,7 +139,8 @@ if st.checkbox('詳細データを表示'):
     st.dataframe(df2_filtered.reset_index(drop=True))
 
 if st.checkbox('解釈や説明'):
-    st.write('')
+    st.write('　公立の学校に通うとしても少なくとも150万円ほどの金額を要することがこのアプリからわかる。私立の学校の場合だと、400万円以上の金額が必要である。また、学習費総額において、グラフ1とグラフ2から公立と私立では私立の方が学費が高いことがわかる。')
+    st.write('　金額段階（構成比）のデータ及びグラフからは、私立の小学校と中学校の学費が高いことがわかる。その理由は、公立校や私立の高校と比べて政府や国からの支援がないからだと考えれられる。')
 
 st.subheader('使用したWebサイトのURL')
 col = st.columns(2)
